@@ -13,10 +13,12 @@
         #map-container { flex: 2; height: 100%; }
         .table-container { flex: 1; height: 100%; overflow-y: auto; border-left: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; margin: 0; }
-        th { background: #2c3e50; color: white; position: sticky; top: 0; padding: 10px; text-align: left; font-size: 13px; z-index: 2; }
+        
+        /* Updated Table Colors to match Green Theme */
+        th { background: #1e5128; color: white; position: sticky; top: 0; padding: 10px; text-align: left; font-size: 13px; z-index: 2; }
         td { padding: 8px 10px; border-bottom: 1px solid #eee; font-size: 12px; color: #333; cursor: pointer; transition: background-color 0.2s; }
-        tr:hover td { background-color: #e8f4fd; color: #007bb6; font-weight: bold; }
-        /* Cuộn thanh mảnh đẹp hơn */
+        tr:hover td { background-color: #d8f3dc; color: #1e5128; font-weight: bold; }
+        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
         @media (max-width: 768px) {
@@ -55,15 +57,26 @@
             chart: { map: 'custom/world', backgroundColor: 'transparent' },
             title: { text: null }, credits: { enabled: false },
             mapNavigation: { enabled: true, buttonOptions: { verticalAlign: 'bottom' } },
-            colorAxis: { min: 1, max: 500, type: 'logarithmic', minColor: '#e0f3ff', maxColor: '#00558f', stops: [[0, '#e0f3ff'], [0.5, '#2b93d2'], [1, '#004370']] },
+            
+            // Updated Color Scheme to Shades of Green
+            colorAxis: { 
+                min: 1, max: 500, type: 'logarithmic', 
+                minColor: '#e5f5e0', maxColor: '#00441b', 
+                stops: [[0, '#e5f5e0'], [0.5, '#41ab5d'], [1, '#00441b']] 
+            },
+            
             legend: { title: { text: 'Tổng vốn đầu tư (Tỷ USD)', style: { fontStyle: 'italic', fontSize: '11px' } } },
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 0.95)', borderWidth: 1, borderRadius: 5, shadow: true, useHTML: true, headerFormat: '',
-                pointFormat: `<div style="padding: 5px;"><b style="font-size: 14px; color: #2c3e50;">{point.name}</b><br/><span style="color: #7f8c8d;">Hạng:</span> <b>#{point.rank}</b><br/><span style="color: #7f8c8d;">Vốn:</span> <b style="color: #e74c3c;">{point.value} Tỷ USD</b></div>`
+                pointFormat: `<div style="padding: 5px;"><b style="font-size: 14px; color: #1e5128;">{point.name}</b><br/><span style="color: #7f8c8d;">Hạng:</span> <b>#{point.rank}</b><br/><span style="color: #7f8c8d;">Vốn:</span> <b style="color: #e74c3c;">{point.value} Tỷ USD</b></div>`
             },
             series: [{
                 data: rawData, joinBy: ['hc-key', 'key'], name: 'Đầu tư AI',
-                states: { hover: { color: '#f1c40f', borderColor: '#333', borderWidth: 1.5 }, select: { color: '#f1c40f', borderColor: '#2c3e50', borderWidth: 2 } },
+                allowPointSelect: true,
+                states: { 
+                    hover: { color: '#f1c40f', borderColor: '#333', borderWidth: 1.5 }, // Yellow highlight on map hover
+                    select: { color: '#f1c40f', borderColor: '#1e5128', borderWidth: 2 } 
+                },
                 dataLabels: { enabled: false }
             }]
         });
@@ -72,8 +85,22 @@
         rawData.forEach((country) => {
             const row = document.createElement('tr');
             row.innerHTML = `<td>${country.rank}</td><td><b>${country.name}</b></td><td>${country.value.toFixed(1)}</td>`;
-            row.addEventListener('mouseenter', () => { const point = chart.series[0].points.find(p => p.key === country.key); if (point) { point.setState('select'); chart.tooltip.refresh(point); } });
-            row.addEventListener('mouseleave', () => { const point = chart.series[0].points.find(p => p.key === country.key); if (point) { point.setState(''); chart.tooltip.hide(); } });
+            
+            // Fixed the hover interaction
+            row.addEventListener('mouseenter', () => { 
+                const point = chart.series[0].points.find(p => p.key === country.key); 
+                if (point) { 
+                    point.setState('hover'); // Now triggers the hover glow correctly
+                    chart.tooltip.refresh(point); 
+                } 
+            });
+            row.addEventListener('mouseleave', () => { 
+                const point = chart.series[0].points.find(p => p.key === country.key); 
+                if (point) { 
+                    point.setState(''); 
+                    chart.tooltip.hide(); 
+                } 
+            });
             tableBody.appendChild(row);
         });
     </script>
