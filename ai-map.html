@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bản đồ AI</title>
+    <title>AI Funding Map</title>
     <script src="https://code.highcharts.com/maps/highmaps.js"></script>
     <script src="https://code.highcharts.com/maps/modules/data.js"></script>
     <script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
@@ -34,7 +34,7 @@
         <div class="table-container">
             <table>
                 <thead>
-                    <tr><th>Hạng</th><th>Quốc gia</th><th>Vốn (Tỷ USD)</th></tr>
+                    <tr><th>Rank</th><th>Country</th><th>Total Investment (in USD, Billions)</th></tr>
                 </thead>
                 <tbody id="ranking-table-body"></tbody>
             </table>
@@ -65,7 +65,7 @@
                 stops: [[0, '#e5f5e0'], [0.5, '#41ab5d'], [1, '#00441b']] 
             },
             
-            legend: { title: { text: 'Tổng vốn đầu tư (Tỷ USD)', style: { fontStyle: 'italic', fontSize: '11px' } } },
+            legend: { title: { text: 'Total Investment (in USD, Billions)', style: { fontStyle: 'italic', fontSize: '11px' } } },
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 0.95)', borderWidth: 1, borderRadius: 5, shadow: true, useHTML: true, headerFormat: '',
                 pointFormat: `<div style="padding: 5px;"><b style="font-size: 14px; color: #1e5128;">{point.name}</b><br/><span style="color: #7f8c8d;">Hạng:</span> <b>#{point.rank}</b><br/><span style="color: #7f8c8d;">Vốn:</span> <b style="color: #e74c3c;">{point.value} Tỷ USD</b></div>`
