@@ -67,7 +67,7 @@
             legend: { title: { text: 'Total Investment (in USD, Billions)', style: { fontStyle: 'italic', fontSize: '11px' } } },
             tooltip: {
                 backgroundColor: 'rgba(255, 255, 255, 0.95)', borderWidth: 1, borderRadius: 5, shadow: true, useHTML: true, headerFormat: '',
-                pointFormat: `<div style="padding: 5px;"><b style="font-size: 14px; color: #1e5128;">{point.name}</b><br/><span style="color: #7f8c8d;">Rank:</span> <b>#{point.rank}</b><br/><span style="color: #7f8c8d;">Vốn:</span> <b style="color: #e74c3c;">{point.value} Tỷ USD</b></div>`
+                pointFormat: `<div style="padding: 5px;"><b style="font-size: 14px; color: #1e5128;">{point.name}</b><br/><span style="color: #7f8c8d;">Rank:</span> <b>#{point.rank}</b><br/><span style="color: #7f8c8d;">Vốn:</span> <b style="color: #e74c3c;">{point.value} Billions USD</b></div>`
             },
             series: [{
                 data: rawData, joinBy: ['hc-key', 'key'], name: 'Đầu tư AI',
