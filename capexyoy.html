@@ -46,12 +46,13 @@
                 text: '2018 - 2026 (Estimated in Billions USD)',
                 style: { color: '#238b45' }
             },
-            xAxis: {
-                categories: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],
-                crosshair: {
-                    color: '#a1d99b',
-                    dashStyle: 'solid'
-                }
+            xAxis: {  
+                categories: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],  
+                crosshair: {  
+                    // Đổi từ '#a1d99b' sang rgba(0, 0, 0, 0.05) để tạo vệt mờ tinh tế trên nền trắng
+                color: 'rgba(0, 0, 0, 0.05)', 
+                dashStyle: 'solid'  
+                }  
             },
             yAxis: {
                 title: {
