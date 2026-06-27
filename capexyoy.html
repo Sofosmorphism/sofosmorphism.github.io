@@ -9,49 +9,11 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
-    <style>
-        body { 
-            margin: 0; 
-            padding: 20px; 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background-color: #f0f2f5; /* Nền Sáng mặc định */
-            transition: background-color 0.3s ease;
-        }
-
-        #chart-container {
-            width: 100%;
-            height: 600px;
-            background-color: #ffffff; /* Nền Card Sáng */
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            padding: 10px;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        /* Tự động đổi nền Web khi ở chế độ Dark Mode */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #121212;
-            }
-            #chart-container {
-                background-color: #1e1e1e;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            }
-        }
-    </style>
 </head>
 <body>
-
-    <div id="chart-container"></div>
-
+    <div id="chart-container" style="height: 600px;"></div>
     <script>
-        // 1. CẢM BIẾN DARK MODE BẰNG JAVASCRIPT
-        // Kiểm tra xem trình duyệt / HĐH của người dùng có đang bật Dark Mode không
-        const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        // 2. TẠO BẢNG MÀU CHUẨN XÁC DỰA TRÊN CHẾ ĐỘ
+        const isDark = false;
         const theme = {
             title: isDark ? '#4ade80' : '#00441b',
             subtitle: isDark ? '#86efac' : '#238b45',
@@ -64,11 +26,10 @@
             hrLine: isDark ? '#555555' : '#cccccc'
         };
 
-        // 3. KHỞI TẠO BIỂU ĐỒ (Truyền trực tiếp biến theme vào cấu hình)
         Highcharts.chart('chart-container', {
             chart: {
                 type: 'spline', 
-                backgroundColor: 'transparent' // Giữ trong suốt để nhận màu nền từ CSS
+                backgroundColor: 'transparent'
             },
             title: {
                 text: 'Big Tech Capital Expenditure (CapEx)',
@@ -80,23 +41,12 @@
             },
             xAxis: {  
                 categories: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],  
-                labels: {
-                    style: { color: theme.axisText } 
-                },
-                crosshair: {  
-                    color: theme.crosshair, 
-                    dashStyle: 'solid'  
-                }  
+                labels: { style: { color: theme.axisText } },
+                crosshair: { color: theme.crosshair, dashStyle: 'solid' }  
             },
             yAxis: {
-                title: {
-                    text: 'Capital Expenditure (Billion USD)',
-                    style: { color: theme.subtitle }
-                },
-                labels: {
-                    format: '${value}B', 
-                    style: { color: theme.axisText }
-                },
+                title: { text: 'Capital Expenditure (Billion USD)', style: { color: theme.subtitle } },
+                labels: { format: '${value}B', style: { color: theme.axisText } },
                 gridLineColor: theme.gridLine 
             },
             legend: {
@@ -109,7 +59,19 @@
                 backgroundColor: theme.tooltipBg, 
                 borderColor: theme.tooltipBorder,
                 style: { color: theme.tooltipText },
-                // Cộng chuỗi để đưa mã màu vào thẻ HTML nội bộ
                 headerFormat: '<span style="font-size: 14px; font-weight: bold; color: ' + theme.tooltipText + ';">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + theme.hrLine + '; margin: 5px 0;">',
                 pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b><br/>',
                 borderRadius: 8,
+                shadow: true
+            },
+            plotOptions: {
+                spline: { lineWidth: 3, marker: { radius: 4, symbol: 'circle' } }
+            },
+            series: [
+                { name: 'Amazon', data: [13, 17, 40, 61, 64, 53, 83, 132, 200], color: '#FFAA4A' },
+                { name: 'Google', data: [25, 24, 22, 25, 31, 32, 53, 91, 190], color: '#41ab5d' }
+            ]
+        });
+    </script>
+</body>
+</html>
