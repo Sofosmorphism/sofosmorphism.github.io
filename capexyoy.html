@@ -11,55 +11,34 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
     <style>
-        /* 1. Khai báo biến màu sắc cho Chế độ Sáng (Mặc định) */
-        :root {
-            --bg-container: #ffffff;
-            --text-title: #00441b;
-            --text-subtitle: #238b45;
-            --text-axis: #333333;
-            --grid-line: #e5f5e0;
-            --crosshair: rgba(0, 0, 0, 0.05);
-            --tooltip-bg: rgba(255, 255, 255, 0.95);
-            --tooltip-text: #333333; 
-            --tooltip-border: #41ab5d;
-            --hr-line: #cccccc;
-        }
-
-        /* 2. Khai báo biến màu sắc cho Chế độ Tối (Dark Mode) */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-container: #1e1e1e; /* Nền xám đen sang trọng */
-                --text-title: #4ade80;   /* Xanh lá sáng để nổi bật trên nền đen */
-                --text-subtitle: #86efac;
-                --text-axis: #e5e7eb;    /* Trắng xám cho các nhãn trục */
-                --grid-line: #374151;    /* Đường lưới xám tối */
-                --crosshair: rgba(255, 255, 255, 0.1);
-                --tooltip-bg: rgba(30, 30, 30, 0.95);
-                --tooltip-text: #f3f4f6;
-                --tooltip-border: #4ade80;
-                --hr-line: #555555;
-            }
-            body {
-                background-color: #121212 !important; /* Làm tối luôn nền trang web ngoài chart */
-            }
-        }
-
         body { 
             margin: 0; 
             padding: 20px; 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background-color: transparent; 
+            background-color: #f0f2f5; /* Nền Sáng mặc định */
+            transition: background-color 0.3s ease;
         }
 
         #chart-container {
             width: 100%;
             height: 600px;
-            background: var(--bg-container); /* Gọi biến CSS nền */
+            background-color: #ffffff; /* Nền Card Sáng */
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             padding: 10px;
             box-sizing: border-box;
-            transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu mượt mà */
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Tự động đổi nền Web khi ở chế độ Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+            }
+            #chart-container {
+                background-color: #1e1e1e;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            }
         }
     </style>
 </head>
@@ -68,50 +47,69 @@
     <div id="chart-container"></div>
 
     <script>
+        // 1. CẢM BIẾN DARK MODE BẰNG JAVASCRIPT
+        // Kiểm tra xem trình duyệt / HĐH của người dùng có đang bật Dark Mode không
+        const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // 2. TẠO BẢNG MÀU CHUẨN XÁC DỰA TRÊN CHẾ ĐỘ
+        const theme = {
+            title: isDark ? '#4ade80' : '#00441b',
+            subtitle: isDark ? '#86efac' : '#238b45',
+            axisText: isDark ? '#e5e7eb' : '#333333',
+            gridLine: isDark ? '#374151' : '#e5f5e0',
+            crosshair: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+            tooltipBg: isDark ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+            tooltipText: isDark ? '#f3f4f6' : '#333333',
+            tooltipBorder: isDark ? '#4ade80' : '#41ab5d',
+            hrLine: isDark ? '#555555' : '#cccccc'
+        };
+
+        // 3. KHỞI TẠO BIỂU ĐỒ (Truyền trực tiếp biến theme vào cấu hình)
         Highcharts.chart('chart-container', {
             chart: {
                 type: 'spline', 
-                backgroundColor: 'transparent' // Để CSS xử lý phần nền nhằm hỗ trợ Dark Mode
+                backgroundColor: 'transparent' // Giữ trong suốt để nhận màu nền từ CSS
             },
             title: {
                 text: 'Big Tech Capital Expenditure (CapEx)',
-                style: { color: 'var(--text-title)', fontWeight: 'bold' } // Sử dụng biến CSS
+                style: { color: theme.title, fontWeight: 'bold' } 
             },
             subtitle: {
                 text: '2018 - 2026 (Estimated in Billions USD)',
-                style: { color: 'var(--text-subtitle)' }
+                style: { color: theme.subtitle }
             },
             xAxis: {  
                 categories: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],  
                 labels: {
-                    style: { color: 'var(--text-axis)' } // Đổi màu nhãn trục X
+                    style: { color: theme.axisText } 
                 },
                 crosshair: {  
-                    color: 'var(--crosshair)', 
+                    color: theme.crosshair, 
                     dashStyle: 'solid'  
                 }  
             },
             yAxis: {
                 title: {
                     text: 'Capital Expenditure (Billion USD)',
-                    style: { color: 'var(--text-subtitle)' }
+                    style: { color: theme.subtitle }
                 },
                 labels: {
                     format: '${value}B', 
-                    style: { color: 'var(--text-axis)' }
+                    style: { color: theme.axisText }
                 },
-                gridLineColor: 'var(--grid-line)' // Màu đường lưới tự động đổi
+                gridLineColor: theme.gridLine 
             },
             legend: {
-                itemStyle: { color: 'var(--text-axis)' }, // Đổi màu tên cty ở chú thích
-                itemHoverStyle: { color: 'var(--text-title)' }
+                itemStyle: { color: theme.axisText }, 
+                itemHoverStyle: { color: theme.title }
             },
             tooltip: {
                 shared: true, 
                 useHTML: true,
-                backgroundColor: 'var(--tooltip-bg)', 
-                borderColor: 'var(--tooltip-border)',
-                style: { color: 'var(--tooltip-text)' },
-                // Đã sửa lại lỗi chữ #DDDDDD bị chìm vào nền trắng
-                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: var(--tooltip-text);">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid var(--hr-line); margin: 5px 0;">',
-                pointFormat: '<span style="
+                backgroundColor: theme.tooltipBg, 
+                borderColor: theme.tooltipBorder,
+                style: { color: theme.tooltipText },
+                // Cộng chuỗi để đưa mã màu vào thẻ HTML nội bộ
+                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: ' + theme.tooltipText + ';">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + theme.hrLine + '; margin: 5px 0;">',
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b><br/>',
+                borderRadius: 8,
