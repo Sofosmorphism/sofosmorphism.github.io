@@ -11,20 +11,55 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
     <style>
+        /* 1. Khai báo biến màu sắc cho Chế độ Sáng (Mặc định) */
+        :root {
+            --bg-container: #ffffff;
+            --text-title: #00441b;
+            --text-subtitle: #238b45;
+            --text-axis: #333333;
+            --grid-line: #e5f5e0;
+            --crosshair: rgba(0, 0, 0, 0.05);
+            --tooltip-bg: rgba(255, 255, 255, 0.95);
+            --tooltip-text: #333333; 
+            --tooltip-border: #41ab5d;
+            --hr-line: #cccccc;
+        }
+
+        /* 2. Khai báo biến màu sắc cho Chế độ Tối (Dark Mode) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-container: #1e1e1e; /* Nền xám đen sang trọng */
+                --text-title: #4ade80;   /* Xanh lá sáng để nổi bật trên nền đen */
+                --text-subtitle: #86efac;
+                --text-axis: #e5e7eb;    /* Trắng xám cho các nhãn trục */
+                --grid-line: #374151;    /* Đường lưới xám tối */
+                --crosshair: rgba(255, 255, 255, 0.1);
+                --tooltip-bg: rgba(30, 30, 30, 0.95);
+                --tooltip-text: #f3f4f6;
+                --tooltip-border: #4ade80;
+                --hr-line: #555555;
+            }
+            body {
+                background-color: #121212 !important; /* Làm tối luôn nền trang web ngoài chart */
+            }
+        }
+
         body { 
             margin: 0; 
             padding: 20px; 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             background-color: transparent; 
         }
+
         #chart-container {
             width: 100%;
             height: 600px;
-            background: #ffffff;
+            background: var(--bg-container); /* Gọi biến CSS nền */
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             padding: 10px;
             box-sizing: border-box;
+            transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu mượt mà */
         }
     </style>
 </head>
@@ -35,79 +70,48 @@
     <script>
         Highcharts.chart('chart-container', {
             chart: {
-                type: 'spline', // Creates smooth, curved lines
-                backgroundColor: 'transparent'
+                type: 'spline', 
+                backgroundColor: 'transparent' // Để CSS xử lý phần nền nhằm hỗ trợ Dark Mode
             },
             title: {
                 text: 'Big Tech Capital Expenditure (CapEx)',
-                style: { color: '#00441b', fontWeight: 'bold' } // Dark green text
+                style: { color: 'var(--text-title)', fontWeight: 'bold' } // Sử dụng biến CSS
             },
             subtitle: {
                 text: '2018 - 2026 (Estimated in Billions USD)',
-                style: { color: '#238b45' }
+                style: { color: 'var(--text-subtitle)' }
             },
             xAxis: {  
                 categories: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],  
+                labels: {
+                    style: { color: 'var(--text-axis)' } // Đổi màu nhãn trục X
+                },
                 crosshair: {  
-                    // Đổi từ '#a1d99b' sang rgba(0, 0, 0, 0.05) để tạo vệt mờ tinh tế trên nền trắng
-                color: 'rgba(0, 0, 0, 0.05)', 
-                dashStyle: 'solid'  
+                    color: 'var(--crosshair)', 
+                    dashStyle: 'solid'  
                 }  
             },
             yAxis: {
                 title: {
                     text: 'Capital Expenditure (Billion USD)',
-                    style: { color: '#1e5128' }
+                    style: { color: 'var(--text-subtitle)' }
                 },
                 labels: {
-                    format: '${value}B', // Adds $ and B to the Y-axis labels
-                    style: { color: '#333' }
+                    format: '${value}B', 
+                    style: { color: 'var(--text-axis)' }
                 },
-                gridLineColor: '#e5f5e0' // Light green grid lines
+                gridLineColor: 'var(--grid-line)' // Màu đường lưới tự động đổi
+            },
+            legend: {
+                itemStyle: { color: 'var(--text-axis)' }, // Đổi màu tên cty ở chú thích
+                itemHoverStyle: { color: 'var(--text-title)' }
             },
             tooltip: {
-                shared: true, // Groups all lines' data into one hover box
+                shared: true, 
                 useHTML: true,
-                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: #DDDDDD;">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid #333; margin: 5px 0;">',
-                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b><br/>',
-                backgroundColor: 'rgba(255, 255, 255, 0.95)', // 
-                borderColor: '#41ab5d',
-                borderRadius: 8,
-                shadow: true
-            },
-            plotOptions: {
-                spline: {
-                    lineWidth: 3,
-                    marker: {
-                        radius: 4,
-                        symbol: 'circle'
-                    }
-                }
-            },
-            // Green Theme Color Palette for Series
-            series: [
-                {
-                    name: 'Amazon',
-                    data: [13, 17, 40, 61, 64, 53, 83, 132, 200],
-                    color: '#FFAA4A' // Yellow-orange
-                },
-                {
-                    name: 'Google',
-                    data: [25, 24, 22, 25, 31, 32, 53, 91, 190],
-                    color: '#41ab5d' // Medium dark green
-                },
-                {
-                    name: 'Microsoft',
-                    data: [14, 14, 18, 23, 25, 35, 56, 83, 190],
-                    color: '#820DFF' // purple
-                },
-                {
-                    name: 'Meta',
-                    data: [14, 15, 15, 19, 31, 27, 37, 70, 135],
-                    color: '#3589EA' // Blue
-                }
-            ]
-        });
-    </script>
-</body>
-</html>
+                backgroundColor: 'var(--tooltip-bg)', 
+                borderColor: 'var(--tooltip-border)',
+                style: { color: 'var(--tooltip-text)' },
+                // Đã sửa lại lỗi chữ #DDDDDD bị chìm vào nền trắng
+                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: var(--tooltip-text);">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid var(--hr-line); margin: 5px 0;">',
+                pointFormat: '<span style="
