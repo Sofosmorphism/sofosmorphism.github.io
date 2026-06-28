@@ -89,46 +89,21 @@
             },
             
             // ==========================================
-            // KHU VỰC TOOLTIP ĐÃ ĐƯỢC LÀM LẠI HOÀN TOÀN
+            // QUAY LẠI CẤU TRÚC TOOLTIP BẢN GỐC CỦA BẠN
             // ==========================================
             tooltip: {
                 shared: true, 
                 useHTML: true,
-                outside: true, // Vũ khí chống cắt chữ / rớt dòng của Highcharts
                 backgroundColor: tooltipBgColor, 
                 borderColor: titleColor,
                 borderRadius: 8,
                 shadow: true,
-                style: { 
-                    color: textColor,
-                    whiteSpace: 'nowrap'
+                style: {
+                    color: textColor
                 },
-                // Dùng formatter để tự xây dựng bảng HTML hoàn chỉnh
-                formatter: function () {
-                    var html = '<div style="text-align: center; padding: 2px;">';
-                    
-                    // Header Năm nằm chính giữa
-                    html += '<div style="font-size: 14px; font-weight: bold; margin-bottom: 5px; color: ' + textColor + ';">Year ' + this.x + '</div>';
-                    html += '<div style="border-top: 1px solid ' + hrColor + '; margin-bottom: 5px;"></div>';
-                    
-                    // Table chứa dữ liệu thẳng hàng
-                    html += '<table style="margin: 0 auto; width: 100%; border-collapse: collapse;">';
-                    this.points.forEach(function (point) {
-                        html += '<tr>';
-                        // Ô bên trái: Tên công ty (căn trái)
-                        html += '<td style="text-align: left; padding: 3px 10px 3px 0;">';
-                        html += '<span style="color:' + point.color + '">\u25CF</span> ' + point.series.name + ':';
-                        html += '</td>';
-                        // Ô bên phải: Số tiền (căn phải)
-                        html += '<td style="text-align: right; padding: 3px 0 3px 10px;">';
-                        html += '<b>$' + point.y + 'B</b>';
-                        html += '</td>';
-                        html += '</tr>';
-                    });
-                    html += '</table></div>';
-                    
-                    return html;
-                }
+                // Thay chữ #DDDDDD và #333 bằng biến màu tự động tương phản
+                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: ' + textColor + ';">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + hrColor + '; margin: 5px 0;">',
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b><br/>'
             },
             // ==========================================
 
