@@ -28,7 +28,11 @@
             box-sizing: border-box;
         }
 
-        /* Đảo màu nền tổng thể khi ở chế độ Dark Mode */
+        /* VŨ KHÍ TỐI THƯỢNG: Cấm Highcharts bóp hẹp Tooltip */
+        .highcharts-tooltip {
+            white-space: nowrap !important;
+        }
+
         @media (prefers-color-scheme: dark) {
             body { background-color: #121212; }
             #chart-container { background-color: #1e1e1e; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
@@ -40,17 +44,13 @@
     <div id="chart-container"></div>
 
     <script>
-        // 1. Cảm biến Dark Mode an toàn
         var isDark = false;
         try {
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 isDark = true;
             }
-        } catch (error) {
-            console.log("Môi trường không hỗ trợ đọc Dark Mode");
-        }
+        } catch (error) {}
 
-        // 2. Bảng màu tự động 
         var textColor = isDark ? '#e5e7eb' : '#333333';
         var titleColor = isDark ? '#4ade80' : '#00441b';
         var subTitleColor = isDark ? '#86efac' : '#238b45';
@@ -59,7 +59,6 @@
         var tooltipBgColor = isDark ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)';
         var hrColor = isDark ? '#555555' : '#cccccc';
 
-        // 3. Khởi tạo biểu đồ
         Highcharts.chart('chart-container', {
             chart: {
                 type: 'spline', 
@@ -87,10 +86,6 @@
                 itemStyle: { color: textColor }, 
                 itemHoverStyle: { color: titleColor }
             },
-            
-            // ==========================================
-            // QUAY LẠI CẤU TRÚC TOOLTIP BẢN GỐC CỦA BẠN
-            // ==========================================
             tooltip: {
                 shared: true, 
                 useHTML: true,
@@ -98,15 +93,11 @@
                 borderColor: titleColor,
                 borderRadius: 8,
                 shadow: true,
-                style: {
-                    color: textColor
-                },
-                // Thay chữ #DDDDDD và #333 bằng biến màu tự động tương phản
-                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: ' + textColor + ';">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + hrColor + '; margin: 5px 0;">',
-                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b><br/>'
+                // Trả về CẤU TRÚC GỐC của bạn, chỉ bọc màu vào thẻ div để tránh lỗi
+                headerFormat: '<div style="color: ' + textColor + ';"><span style="font-size: 14px; font-weight: bold;">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + hrColor + '; margin: 5px 0;">',
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b><br/>',
+                footerFormat: '</div>'
             },
-            // ==========================================
-
             plotOptions: {
                 spline: {
                     lineWidth: 3,
