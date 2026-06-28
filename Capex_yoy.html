@@ -20,7 +20,7 @@
         #chart-container {
             width: 100%;
             height: 600px;
-            background: #ffffff; /* Nền container mặc định (Chế độ sáng) */
+            background: #ffffff; 
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             padding: 10px;
@@ -41,10 +41,10 @@
     <div id="chart-container"></div>
 
     <script>
-        // Tự động nhận diện chế độ sáng/tối của hệ thống/trình duyệt
+        // Tự động nhận diện chế độ sáng/tối
         var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-        // Định nghĩa các chuỗi màu sắc thích ứng (Chế độ Tối : Chế độ Sáng)
+        // Định nghĩa các chuỗi màu sắc thích ứng
         var titleColor = isDark ? '#4ade80' : '#00441b';
         var subtitleColor = isDark ? '#86efac' : '#238b45';
         var axisTitleColor = isDark ? '#86efac' : '#1e5128';
@@ -73,7 +73,7 @@
             xAxis: {  
                 categories: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],  
                 labels: {
-                    style: { color: labelColor } // Đổi màu chữ nhãn năm trục X
+                    style: { color: labelColor } 
                 },
                 crosshair: {  
                     color: crosshairColor, 
@@ -87,12 +87,12 @@
                 },
                 labels: {
                     format: '${value}B', 
-                    style: { color: labelColor } // Đổi màu chữ nhãn số tiền trục Y
+                    style: { color: labelColor } 
                 },
                 gridLineColor: gridLineColor 
             },
             legend: {
-                itemStyle: { color: labelColor }, // Đổi màu chữ phần chú thích các công ty ở dưới
+                itemStyle: { color: labelColor }, 
                 itemHoverStyle: { color: titleColor }
             },
             tooltip: {
@@ -102,9 +102,13 @@
                 borderColor: tooltipBorder,
                 borderRadius: 8,
                 shadow: true,
-                // Giữ nguyên cấu trúc gốc, chỉ chèn màu chữ linh hoạt để không bị chìm vào nền
-                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: ' + tooltipTextColor + ';">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + hrColor + '; margin: 5px 0;">',
-                pointFormat: '<span style="color: ' + tooltipTextColor + ';"><span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b></span><br/>'
+                
+                // --- VŨ KHÍ CHỐNG CẮT CHỮ NẰM Ở ĐÂY ---
+                // Mở thẻ <div style="white-space: nowrap;"> ở Header và đóng </div> ở Footer
+                headerFormat: '<div style="white-space: nowrap;"><span style="font-size: 14px; font-weight: bold; color: ' + tooltipTextColor + ';">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + hrColor + '; margin: 5px 0;">',
+                pointFormat: '<span style="color: ' + tooltipTextColor + ';"><span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b></span><br/>',
+                footerFormat: '</div>'
+                // -------------------------------------
             },
             plotOptions: {
                 spline: {
