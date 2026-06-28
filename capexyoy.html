@@ -20,19 +20,11 @@
         #chart-container {
             width: 100%;
             height: 600px;
-            background: #ffffff; /* Nền container mặc định (Chế độ sáng) */
+            background: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             padding: 10px;
             box-sizing: border-box;
-        }
-
-        /* Tự động chuyển nền container sang màu tối khi thiết bị bật Dark Mode */
-        @media (prefers-color-scheme: dark) {
-            #chart-container {
-                background: #1e1e1e;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            }
         }
     </style>
 </head>
@@ -41,70 +33,47 @@
     <div id="chart-container"></div>
 
     <script>
-        // Tự động nhận diện chế độ sáng/tối của hệ thống/trình duyệt
-        var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        // Định nghĩa các chuỗi màu sắc thích ứng (Chế độ Tối : Chế độ Sáng)
-        var titleColor = isDark ? '#4ade80' : '#00441b';
-        var subtitleColor = isDark ? '#86efac' : '#238b45';
-        var axisTitleColor = isDark ? '#86efac' : '#1e5128';
-        var labelColor = isDark ? '#e5e7eb' : '#333333';
-        var gridLineColor = isDark ? '#374151' : '#e5f5e0';
-        var crosshairColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
-        
-        var tooltipBg = isDark ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)';
-        var tooltipBorder = isDark ? '#4ade80' : '#41ab5d';
-        var tooltipTextColor = isDark ? '#f3f4f6' : '#333333';
-        var hrColor = isDark ? '#555555' : '#333333';
-
         Highcharts.chart('chart-container', {
             chart: {
-                type: 'spline', 
+                type: 'spline', // Creates smooth, curved lines
                 backgroundColor: 'transparent'
             },
             title: {
                 text: 'Big Tech Capital Expenditure (CapEx)',
-                style: { color: titleColor, fontWeight: 'bold' } 
+                style: { color: '#00441b', fontWeight: 'bold' } // Dark green text
             },
             subtitle: {
                 text: '2018 - 2026 (Estimated in Billions USD)',
-                style: { color: subtitleColor }
+                style: { color: '#238b45' }
             },
             xAxis: {  
                 categories: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],  
-                labels: {
-                    style: { color: labelColor } // Đổi màu chữ nhãn năm trục X
-                },
                 crosshair: {  
-                    color: crosshairColor, 
-                    dashStyle: 'solid'  
+                    // Đổi từ '#a1d99b' sang rgba(0, 0, 0, 0.05) để tạo vệt mờ tinh tế trên nền trắng
+                color: 'rgba(0, 0, 0, 0.05)', 
+                dashStyle: 'solid'  
                 }  
             },
             yAxis: {
                 title: {
                     text: 'Capital Expenditure (Billion USD)',
-                    style: { color: axisTitleColor }
+                    style: { color: '#1e5128' }
                 },
                 labels: {
-                    format: '${value}B', 
-                    style: { color: labelColor } // Đổi màu chữ nhãn số tiền trục Y
+                    format: '${value}B', // Adds $ and B to the Y-axis labels
+                    style: { color: '#333' }
                 },
-                gridLineColor: gridLineColor 
-            },
-            legend: {
-                itemStyle: { color: labelColor }, // Đổi màu chữ phần chú thích các công ty ở dưới
-                itemHoverStyle: { color: titleColor }
+                gridLineColor: '#e5f5e0' // Light green grid lines
             },
             tooltip: {
-                shared: true, 
+                shared: true, // Groups all lines' data into one hover box
                 useHTML: true,
-                backgroundColor: tooltipBg, 
-                borderColor: tooltipBorder,
+                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: #DDDDDD;">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid #333; margin: 5px 0;">',
+                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b><br/>',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)', // 
+                borderColor: '#41ab5d',
                 borderRadius: 8,
-                shadow: true,
-                // Giữ nguyên cấu trúc gốc, chỉ chèn màu chữ linh hoạt để không bị chìm vào nền
-                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: ' + tooltipTextColor + ';">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + hrColor + '; margin: 5px 0;">',
-                pointFormat: '<span style="color: ' + tooltipTextColor + ';"><span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b></span><br/>'
+                shadow: true
             },
             plotOptions: {
                 spline: {
@@ -115,26 +84,27 @@
                     }
                 }
             },
+            // Green Theme Color Palette for Series
             series: [
                 {
                     name: 'Amazon',
                     data: [13, 17, 40, 61, 64, 53, 83, 132, 200],
-                    color: '#FFAA4A' 
+                    color: '#FFAA4A' // Yellow-orange
                 },
                 {
                     name: 'Google',
                     data: [25, 24, 22, 25, 31, 32, 53, 91, 190],
-                    color: '#41ab5d' 
+                    color: '#41ab5d' // Medium dark green
                 },
                 {
                     name: 'Microsoft',
                     data: [14, 14, 18, 23, 25, 35, 56, 83, 190],
-                    color: '#820DFF' 
+                    color: '#820DFF' // purple
                 },
                 {
                     name: 'Meta',
                     data: [14, 15, 15, 19, 31, 27, 37, 70, 135],
-                    color: '#3589EA' 
+                    color: '#3589EA' // Blue
                 }
             ]
         });
