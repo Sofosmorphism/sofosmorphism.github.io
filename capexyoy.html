@@ -15,27 +15,24 @@
             margin: 0; 
             padding: 20px; 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background-color: #f0f2f5; 
+            background-color: transparent; 
         }
-
         #chart-container {
             width: 100%;
             height: 600px;
-            background-color: #ffffff; 
+            background: #ffffff; /* Nền container mặc định (Chế độ sáng) */
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             padding: 10px;
             box-sizing: border-box;
         }
 
-        /* VŨ KHÍ TỐI THƯỢNG: Cấm Highcharts bóp hẹp Tooltip */
-        .highcharts-tooltip {
-            white-space: nowrap !important;
-        }
-
+        /* Tự động chuyển nền container sang màu tối khi thiết bị bật Dark Mode */
         @media (prefers-color-scheme: dark) {
-            body { background-color: #121212; }
-            #chart-container { background-color: #1e1e1e; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+            #chart-container {
+                background: #1e1e1e;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            }
         }
     </style>
 </head>
@@ -44,20 +41,21 @@
     <div id="chart-container"></div>
 
     <script>
-        var isDark = false;
-        try {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                isDark = true;
-            }
-        } catch (error) {}
+        // Tự động nhận diện chế độ sáng/tối của hệ thống/trình duyệt
+        var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-        var textColor = isDark ? '#e5e7eb' : '#333333';
+        // Định nghĩa các chuỗi màu sắc thích ứng (Chế độ Tối : Chế độ Sáng)
         var titleColor = isDark ? '#4ade80' : '#00441b';
-        var subTitleColor = isDark ? '#86efac' : '#238b45';
-        var gridColor = isDark ? '#374151' : '#e5f5e0';
+        var subtitleColor = isDark ? '#86efac' : '#238b45';
+        var axisTitleColor = isDark ? '#86efac' : '#1e5128';
+        var labelColor = isDark ? '#e5e7eb' : '#333333';
+        var gridLineColor = isDark ? '#374151' : '#e5f5e0';
         var crosshairColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
-        var tooltipBgColor = isDark ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)';
-        var hrColor = isDark ? '#555555' : '#cccccc';
+        
+        var tooltipBg = isDark ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)';
+        var tooltipBorder = isDark ? '#4ade80' : '#41ab5d';
+        var tooltipTextColor = isDark ? '#f3f4f6' : '#333333';
+        var hrColor = isDark ? '#555555' : '#333333';
 
         Highcharts.chart('chart-container', {
             chart: {
@@ -70,45 +68,74 @@
             },
             subtitle: {
                 text: '2018 - 2026 (Estimated in Billions USD)',
-                style: { color: subTitleColor }
+                style: { color: subtitleColor }
             },
             xAxis: {  
                 categories: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'],  
-                labels: { style: { color: textColor } },
-                crosshair: { color: crosshairColor, dashStyle: 'solid' }  
+                labels: {
+                    style: { color: labelColor } // Đổi màu chữ nhãn năm trục X
+                },
+                crosshair: {  
+                    color: crosshairColor, 
+                    dashStyle: 'solid'  
+                }  
             },
             yAxis: {
-                title: { text: 'Capital Expenditure (Billion USD)', style: { color: textColor } },
-                labels: { format: '${value}B', style: { color: textColor } },
-                gridLineColor: gridColor 
+                title: {
+                    text: 'Capital Expenditure (Billion USD)',
+                    style: { color: axisTitleColor }
+                },
+                labels: {
+                    format: '${value}B', 
+                    style: { color: labelColor } // Đổi màu chữ nhãn số tiền trục Y
+                },
+                gridLineColor: gridLineColor 
             },
             legend: {
-                itemStyle: { color: textColor }, 
+                itemStyle: { color: labelColor }, // Đổi màu chữ phần chú thích các công ty ở dưới
                 itemHoverStyle: { color: titleColor }
             },
             tooltip: {
                 shared: true, 
                 useHTML: true,
-                backgroundColor: tooltipBgColor, 
-                borderColor: titleColor,
+                backgroundColor: tooltipBg, 
+                borderColor: tooltipBorder,
                 borderRadius: 8,
                 shadow: true,
-                // Trả về CẤU TRÚC GỐC của bạn, chỉ bọc màu vào thẻ div để tránh lỗi
-                headerFormat: '<div style="color: ' + textColor + ';"><span style="font-size: 14px; font-weight: bold;">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + hrColor + '; margin: 5px 0;">',
-                pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b><br/>',
-                footerFormat: '</div>'
+                // Giữ nguyên cấu trúc gốc, chỉ chèn màu chữ linh hoạt để không bị chìm vào nền
+                headerFormat: '<span style="font-size: 14px; font-weight: bold; color: ' + tooltipTextColor + ';">Year {point.key}</span><br/><hr style="border: 0; border-top: 1px solid ' + hrColor + '; margin: 5px 0;">',
+                pointFormat: '<span style="color: ' + tooltipTextColor + ';"><span style="color:{series.color}">\u25CF</span> {series.name}: <b>${point.y}B</b></span><br/>'
             },
             plotOptions: {
                 spline: {
                     lineWidth: 3,
-                    marker: { radius: 4, symbol: 'circle' }
+                    marker: {
+                        radius: 4,
+                        symbol: 'circle'
+                    }
                 }
             },
             series: [
-                { name: 'Amazon', data: [13, 17, 40, 61, 64, 53, 83, 132, 200], color: '#FFAA4A' },
-                { name: 'Google', data: [25, 24, 22, 25, 31, 32, 53, 91, 190], color: '#41ab5d' },
-                { name: 'Microsoft', data: [14, 14, 18, 23, 25, 35, 56, 83, 190], color: '#820DFF' },
-                { name: 'Meta', data: [14, 15, 15, 19, 31, 27, 37, 70, 135], color: '#3589EA' }
+                {
+                    name: 'Amazon',
+                    data: [13, 17, 40, 61, 64, 53, 83, 132, 200],
+                    color: '#FFAA4A' 
+                },
+                {
+                    name: 'Google',
+                    data: [25, 24, 22, 25, 31, 32, 53, 91, 190],
+                    color: '#41ab5d' 
+                },
+                {
+                    name: 'Microsoft',
+                    data: [14, 14, 18, 23, 25, 35, 56, 83, 190],
+                    color: '#820DFF' 
+                },
+                {
+                    name: 'Meta',
+                    data: [14, 15, 15, 19, 31, 27, 37, 70, 135],
+                    color: '#3589EA' 
+                }
             ]
         });
     </script>
